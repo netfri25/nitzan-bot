@@ -33,10 +33,14 @@ class CustomClient(discord.Client):
         _log.info(f"{self.user} is ready")
 
     async def on_member_join(self, member: Member) -> None:
-        guild_channels = member.guild.text_channels
-        if len(guild_channels) == 0:
-            return
-        channel = guild_channels[0]
+        _log.info(f"{member.name} joined the server")
+        channel = member.guild.system_channel
+        if channel is None:
+            guild_channles = member.guild.text_channels
+            if len(guild_channles) == 0:
+                _log.error(f"no text channels found in guild {member.guild}")
+                return
+            channel = guild_channles[0]
 
         k = random.randrange(1, 10)
         curses = ', '.join(set(random.choices(self.curses, k=k)))
@@ -57,14 +61,12 @@ class CustomClient(discord.Client):
 
 
 def main():
-    global all_curses
-
     load_dotenv()
     TOKEN = os.getenv("TOKEN")
     if TOKEN is None:
         _log.error("Please provide TOKEN in a .env file")
         exit(1)
-    INTENTS = Intents(members=True, messages=True, message_content=True)
+    INTENTS = Intents(members=True, messages=True, message_content=True, guilds=True)
     CustomClient(INTENTS).run(TOKEN, log_handler=None)
 
 
