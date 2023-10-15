@@ -7,7 +7,7 @@ from discord.utils import setup_logging
 from dotenv import load_dotenv
 
 import discord
-from discord import Intents, Member, Message
+from discord import Intents, Member, Message, User
 from discord.abc import Messageable
 
 _log = setup_logging()
@@ -50,15 +50,23 @@ class CustomClient(discord.Client):
         if message.author == self.user:
             return
 
+        # curse mentions
+        channel = message.channel
+        for user in message.mentions:
+            if user == self.user:
+                continue
+            await self.send_curse(user, channel)
+
+        # auto cursing
         now = time()
         if now - self.last_curse_time < self.CURSE_DELTA_TIME:
             return
         self.last_curse_time = now
+        await self.send_curse(message.author, channel)
 
-        channel = message.channel
+    async def send_curse(self, user_to_mention: User | Member, channel: Messageable) -> None:
         curse = random.choice(self.curses)
-        await self.send(channel, f"{message.author.mention} {curse}")
-
+        await self.send(channel, f"{user_to_mention.mention} {curse}")
 
 def main():
     load_dotenv()
