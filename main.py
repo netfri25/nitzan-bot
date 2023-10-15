@@ -12,6 +12,7 @@ from discord.abc import Messageable
 
 _log = setup_logging()
 
+
 class CustomClient(discord.Client):
     curses: List[str] = []
     last_curse_time: float = 0
@@ -67,6 +68,7 @@ class CustomClient(discord.Client):
     async def send_curse(self, user_to_mention: User | Member, channel: Messageable) -> None:
         curse = random.choice(self.curses)
         await self.send(channel, f"{user_to_mention.mention} {curse}")
+
 
 def main():
     load_dotenv()
