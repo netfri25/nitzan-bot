@@ -12,6 +12,7 @@ from discord.abc import Messageable
 
 _log = setup_logging()
 
+MEMES_CHANNEL_ID = 1161975233012584499
 
 class CustomClient(discord.Client):
     curses: List[str] = []
@@ -49,6 +50,9 @@ class CustomClient(discord.Client):
 
     async def on_message(self, message: Message) -> None:
         if message.author == self.user:
+            return
+
+        if message.channel.id != MEMES_CHANNEL_ID:
             return
 
         # curse mentions
